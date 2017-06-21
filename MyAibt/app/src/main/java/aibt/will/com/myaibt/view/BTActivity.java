@@ -12,6 +12,7 @@ import android.widget.Button;
 import java.util.Set;
 
 import aibt.will.com.myaibt.R;
+import aibt.will.com.myaibt.receiver.BtDeviceReceiver;
 
 /**
  * @author 王晶
@@ -25,20 +26,25 @@ public class BTActivity extends Activity{
     private int REQUEST_ENABLE_BT  =  2;
 
     Button btnEnableBt;
-    Button btnListPair;
+    Button btnListPair,btnDiscover,btnConnect,btnStopDiscover;
     BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    BtDeviceReceiver mBtDeviceReceiver = new BtDeviceReceiver();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bt);
-
+        this.registerReceiver(mBtDeviceReceiver, mBtDeviceReceiver.getFilter());
         init();
     }
 
     private void init(){
         btnEnableBt = (Button) findViewById(R.id.btnEnableBt);
+        btnListPair = (Button) findViewById(R.id.btnListPaired);
+        btnDiscover = (Button) findViewById(R.id.btnDiscover);
+        btnStopDiscover = (Button) findViewById(R.id.btnStopDiscover);
+
 
         btnEnableBt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +71,25 @@ public class BTActivity extends Activity{
                 }
             }
         });
+
+        btnDiscover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                boolean flag = mBluetoothAdapter.startDiscovery();
+
+                Log.i(TAG,"start discover bt device ,flag is " + flag);
+            }
+        });
+
+        btnStopDiscover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean flag = mBluetoothAdapter.cancelDiscovery();
+
+                Log.i(TAG,"cancel discover bt device ,flag is " + flag);
+            }
+        });
     }
 
 
@@ -82,6 +107,12 @@ public class BTActivity extends Activity{
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(mBtDeviceReceiver);
+        Log.i(TAG,"onDestroy");
+    }
 
 
 
