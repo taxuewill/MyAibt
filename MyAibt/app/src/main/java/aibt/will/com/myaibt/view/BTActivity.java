@@ -25,6 +25,7 @@ public class BTActivity extends Activity{
     private int REQUEST_ENABLE_BT  =  2;
 
     Button btnEnableBt;
+    Button btnListPair;
     BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
 
@@ -51,6 +52,17 @@ public class BTActivity extends Activity{
                     }
                 }
 
+            }
+        });
+
+        btnListPair.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG,"list paired device...");
+                Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+                for(BluetoothDevice bluetoothDevice : pairedDevices){
+                    Log.i(TAG,"paired device is "+bluetoothDevice.getName()+", address is "+bluetoothDevice.getAddress());
+                }
             }
         });
     }

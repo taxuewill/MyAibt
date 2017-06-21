@@ -14,6 +14,13 @@
             android:textAllCaps="false"
             android:text="enable bt"
             android:layout_weight="1"/>
+        <Button
+            android:id="@+id/btnListPaired"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="list paired device"
+            android:textAllCaps="false"
+            android:layout_weight="1"/>
     </LinearLayout>
 
 </LinearLayout>
