@@ -3,10 +3,17 @@ package aibt.will.com.myaibt.view;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import java.util.Set;
@@ -27,8 +34,11 @@ public class BTActivity extends Activity{
 
     Button btnEnableBt;
     Button btnListPair,btnDiscover,btnConnect,btnStopDiscover;
+    Button btnTest;
     BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     BtDeviceReceiver mBtDeviceReceiver = new BtDeviceReceiver();
+
+    WindowManager windowManager;
 
 
     @Override
@@ -36,6 +46,16 @@ public class BTActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bt);
         this.registerReceiver(mBtDeviceReceiver, mBtDeviceReceiver.getFilter());
+
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (! Settings.canDrawOverlays(BTActivity.this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent,10);
+            }
+        }
+
         init();
     }
 
@@ -44,7 +64,9 @@ public class BTActivity extends Activity{
         btnListPair = (Button) findViewById(R.id.btnListPaired);
         btnDiscover = (Button) findViewById(R.id.btnDiscover);
         btnStopDiscover = (Button) findViewById(R.id.btnStopDiscover);
+        btnTest = (Button) findViewById(R.id.btnTest);
 
+        windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);;
 
         btnEnableBt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +110,25 @@ public class BTActivity extends Activity{
                 boolean flag = mBluetoothAdapter.cancelDiscovery();
 
                 Log.i(TAG,"cancel discover bt device ,flag is " + flag);
+            }
+        });
+
+        btnTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View popView = LayoutInflater.from(BTActivity.this).inflate(R.layout.pop_window,null);
+                WindowManager.LayoutParams mFloatWindowParams = null;
+                mFloatWindowParams = new WindowManager.LayoutParams();
+                mFloatWindowParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+                mFloatWindowParams.flags = WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM | WindowManager.LayoutParams.FLAG_FULLSCREEN;
+                popView.setFocusableInTouchMode(true);
+                mFloatWindowParams.gravity = Gravity.CENTER | Gravity.BOTTOM;
+                mFloatWindowParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+                mFloatWindowParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+                mFloatWindowParams.x = 0;
+                mFloatWindowParams.y = 0;
+
+                windowManager.addView(popView, mFloatWindowParams);
             }
         });
     }
