@@ -19,6 +19,9 @@ public class BtDeviceReceiver extends BroadcastReceiver {
 
     private static final String TAG = "BtDeviceReceiver";
 
+
+    private static final String HEAD_NAME = "LG HBS730";
+
     List<BluetoothDevice> bluetoothDevices = new ArrayList<>();
 
 
@@ -31,7 +34,7 @@ public class BtDeviceReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if(BluetoothDevice.ACTION_FOUND.equals(action)){
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            if(!bluetoothDevices.contains(device)){
+            if(!checkExist(device)){
                 bluetoothDevices.add(device);
             }
             String deviceName = device.getName();
@@ -46,5 +49,27 @@ public class BtDeviceReceiver extends BroadcastReceiver {
         return bluetoothDevices;
     }
 
+
+    private boolean checkExist(BluetoothDevice bluetoothDevice){
+        boolean flag = false;
+        for(BluetoothDevice bd : bluetoothDevices){
+            if(bd.getName() != null && bd.getName().equals(bluetoothDevice.getName())){
+                flag = true;
+            }
+        }
+        return flag;
+    }
+
+
+    public BluetoothDevice getHeadSetDev(){
+        BluetoothDevice headset = null;
+        for(BluetoothDevice bd : bluetoothDevices){
+            if(bd.getName() != null && bd.getName().equals(HEAD_NAME)){
+                headset = bd;
+                break;
+            }
+        }
+        return headset;
+    }
 
 }
