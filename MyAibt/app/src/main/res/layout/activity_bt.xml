@@ -47,10 +47,10 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <Button
-            android:id="@+id/btnTest"
+            android:id="@+id/btnCreateBond"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="test"/>
+            android:text="create bond"/>
     </LinearLayout>
 
 

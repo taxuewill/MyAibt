@@ -10,7 +10,7 @@ import aibt.will.com.myaibt.view.BTActivity;
 
 public class MainActivity extends Activity {
 
-    private static final String TAG = "BTActivity";
+    private static final String TAG = "BTMainActivity";
 
     protected BluetoothAdapter mBluetoothAdapter;
 
@@ -20,6 +20,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         Intent intent = new Intent(this, BTActivity.class);
         startActivity(intent);
+//        Intent intent = new Intent(this, WifiActivity.class);
+//        startActivity(intent);
 
 
         Log.i(TAG,"start discovery");

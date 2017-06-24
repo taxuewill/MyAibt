@@ -10,12 +10,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import java.util.List;
 import java.util.Set;
 
 import aibt.will.com.myaibt.R;
@@ -33,8 +32,8 @@ public class BTActivity extends Activity{
     private int REQUEST_ENABLE_BT  =  2;
 
     Button btnEnableBt;
-    Button btnListPair,btnDiscover,btnConnect,btnStopDiscover;
-    Button btnTest;
+    Button btnListPair,btnDiscover,btnCreateBond,btnStopDiscover;
+//    Button btnTest;
     BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     BtDeviceReceiver mBtDeviceReceiver = new BtDeviceReceiver();
 
@@ -64,7 +63,7 @@ public class BTActivity extends Activity{
         btnListPair = (Button) findViewById(R.id.btnListPaired);
         btnDiscover = (Button) findViewById(R.id.btnDiscover);
         btnStopDiscover = (Button) findViewById(R.id.btnStopDiscover);
-        btnTest = (Button) findViewById(R.id.btnTest);
+        btnCreateBond = (Button) findViewById(R.id.btnCreateBond);
 
         windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);;
 
@@ -113,24 +112,45 @@ public class BTActivity extends Activity{
             }
         });
 
-        btnTest.setOnClickListener(new View.OnClickListener() {
+//        btnTest.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                View popView = LayoutInflater.from(BTActivity.this).inflate(R.layout.pop_window,null);
+//                WindowManager.LayoutParams mFloatWindowParams = null;
+//                mFloatWindowParams = new WindowManager.LayoutParams();
+//                mFloatWindowParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+//                mFloatWindowParams.flags = WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM | WindowManager.LayoutParams.FLAG_FULLSCREEN;
+//                popView.setFocusableInTouchMode(true);
+//                mFloatWindowParams.gravity = Gravity.CENTER | Gravity.BOTTOM;
+//                mFloatWindowParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+//                mFloatWindowParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+//                mFloatWindowParams.x = 0;
+//                mFloatWindowParams.y = 0;
+//
+//                windowManager.addView(popView, mFloatWindowParams);
+//            }
+//        });
+        btnCreateBond.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View popView = LayoutInflater.from(BTActivity.this).inflate(R.layout.pop_window,null);
-                WindowManager.LayoutParams mFloatWindowParams = null;
-                mFloatWindowParams = new WindowManager.LayoutParams();
-                mFloatWindowParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
-                mFloatWindowParams.flags = WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM | WindowManager.LayoutParams.FLAG_FULLSCREEN;
-                popView.setFocusableInTouchMode(true);
-                mFloatWindowParams.gravity = Gravity.CENTER | Gravity.BOTTOM;
-                mFloatWindowParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-                mFloatWindowParams.height = WindowManager.LayoutParams.MATCH_PARENT;
-                mFloatWindowParams.x = 0;
-                mFloatWindowParams.y = 0;
+                Log.i(TAG,"create bond");
+                List<BluetoothDevice> bluetoothDevices =  mBtDeviceReceiver.getBluetoothDevices();
+                BluetoothDevice bluetoothDevice = null;
+                for(BluetoothDevice bd : bluetoothDevices){
+                    if("WillPhone".equals(bd.getName())){
+                        bluetoothDevice = bd;
+                        break;
+                    }
+                }
 
-                windowManager.addView(popView, mFloatWindowParams);
+                if(bluetoothDevice != null){
+                    Log.i(TAG,"find device ,now create bond");
+                    boolean flag = bluetoothDevice.createBond();
+                    Log.i(TAG,"create bond flag is " + flag);
+                }
             }
         });
+
     }
 
 

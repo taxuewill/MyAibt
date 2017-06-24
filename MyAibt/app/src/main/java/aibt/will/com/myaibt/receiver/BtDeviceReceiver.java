@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author 王晶
  * @date 17-6-21-下午2:06
@@ -16,6 +19,7 @@ public class BtDeviceReceiver extends BroadcastReceiver {
 
     private static final String TAG = "BtDeviceReceiver";
 
+    List<BluetoothDevice> bluetoothDevices = new ArrayList<>();
 
 
     public IntentFilter getFilter(){
@@ -27,9 +31,20 @@ public class BtDeviceReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if(BluetoothDevice.ACTION_FOUND.equals(action)){
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            if(!bluetoothDevices.contains(device)){
+                bluetoothDevices.add(device);
+            }
             String deviceName = device.getName();
             String deviceHardwareAds = device.getAddress();
             Log.i(TAG,"find device:"+deviceName+", address is "+deviceHardwareAds);
         }
+
     }
+
+
+    public List<BluetoothDevice> getBluetoothDevices(){
+        return bluetoothDevices;
+    }
+
+
 }

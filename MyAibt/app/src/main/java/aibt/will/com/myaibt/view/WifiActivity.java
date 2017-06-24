@@ -24,6 +24,7 @@ import aibt.will.com.myaibt.R;
 import aibt.will.com.myaibt.util.threadutil.ThreadUtil;
 
 import static aibt.will.com.myaibt.view.WifiActivity.WifiCipherType.WIFICIPHER_NOPASS;
+import static android.net.wifi.WifiManager.NETWORK_STATE_CHANGED_ACTION;
 import static android.net.wifi.WifiManager.SCAN_RESULTS_AVAILABLE_ACTION;
 
 /**
@@ -61,6 +62,8 @@ public class WifiActivity extends Activity{
         IntentFilter mFilter = new IntentFilter();
         mFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
         mFilter.addAction(SCAN_RESULTS_AVAILABLE_ACTION);
+        mFilter.addAction(NETWORK_STATE_CHANGED_ACTION);
+
         mContext.registerReceiver(connectStateReceiver,mFilter);
         init();
     }
@@ -186,13 +189,17 @@ public class WifiActivity extends Activity{
             if(intent.getAction().equals(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION)) {
                 final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                 WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                if(wifiInfo != null){
-                    Log.i(TAG,"current ssid is "+wifiInfo.getSSID());
-                    SupplicantState state = wifiInfo.getSupplicantState();
+                String wifiname = intent.getStringExtra("SSID");
+                Log.i(TAG, "SSID is "+wifiname);
+                if(wifiInfo != null) {
+                    Log.i(TAG, "current ssid is " + wifiInfo.getSSID());
+
+                }
+                SupplicantState state = wifiInfo.getSupplicantState();
                     String str = "";
                     int linkWifiResult = intent.getIntExtra(WifiManager.EXTRA_SUPPLICANT_ERROR, 123);
                     if(linkWifiResult == WifiManager.ERROR_AUTHENTICATING){
-                        Log.i(TAG,"passsword not correct！！！！");
+                        Log.i(TAG,"passsword not correct！！！！  --->" +wifiname);
                         pwdWrongFlag = true;
                     }
                     if(state == SupplicantState.ASSOCIATED) {
@@ -212,12 +219,12 @@ public class WifiActivity extends Activity{
                         connectFlag = false;
                     }
                     Log.i(TAG,"str is " + str);
-                }
-            }else if(intent.getAction().equals(SCAN_RESULTS_AVAILABLE_ACTION)){
+
+            }else if(intent.getAction().equals(SCAN_RESULTS_AVAILABLE_ACTION)||intent.getAction().equals(NETWORK_STATE_CHANGED_ACTION)){
                 List<ScanResult> wireless = wifiManager.getScanResults();
                 if(wireless != null){
                     for(int i = 0; i < wireless.size(); i++){
-                        Log.i(TAG,"wireless["+i+"] is "+wireless.get(i).SSID);
+//                        Log.i(TAG,"wireless["+i+"] is "+wireless.get(i).SSID);
                     }
                 }
             }
@@ -251,5 +258,10 @@ public class WifiActivity extends Activity{
 
         return results;
 
+    }
+
+    private void test(){
+        Intent intent = new Intent();
+        intent.putExtra("SSID","SSD");
     }
 }
