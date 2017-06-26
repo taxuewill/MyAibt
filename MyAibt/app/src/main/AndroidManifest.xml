@@ -51,7 +51,10 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH_STACK" />
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
 
     <application
         android:allowBackup="true"
@@ -73,6 +76,7 @@
         <activity android:name=".view.WifiActivity" />
         <activity android:name=".view.MvpActivity" />
         <activity android:name=".view.BTActivity" />
+        <activity android:name=".view.AudioActivity"/>
     </application>
 
 </manifest>

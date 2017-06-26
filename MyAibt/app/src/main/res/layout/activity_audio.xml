@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btnPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:onClick="onClick"
+            android:text="play music"/>
+        <Button
+            android:id="@+id/btnPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:onClick="onClick"
+            android:text="pause music"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/startRecord"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="start record"
+            android:onClick="onClick"
+            />
+        <Button
+            android:id="@+id/stopRecord"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="stop record"
+            android:onClick="onClick"
+            />
+        <Button
+            android:id="@+id/startPlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="start play record"
+            android:onClick="onClick"
+            />
+        <Button
+            android:id="@+id/stopPlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="stop play record"
+            android:onClick="onClick"
+            />
+    </LinearLayout>
+
+</LinearLayout>

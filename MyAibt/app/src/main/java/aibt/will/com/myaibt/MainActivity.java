@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import aibt.will.com.myaibt.view.BTActivity;
+import aibt.will.com.myaibt.view.AudioActivity;
 
 public class MainActivity extends Activity {
 
@@ -18,13 +18,14 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Intent intent = new Intent(this, BTActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, BTActivity.class);
+//        startActivity(intent);
 //        Intent intent = new Intent(this, WifiActivity.class);
 //        startActivity(intent);
+        Intent intent = new Intent(this, AudioActivity.class);
+        startActivity(intent);
 
-
-        Log.i(TAG,"start discovery");
+        Log.i(TAG,"start mainActivity");
 
 
     }
