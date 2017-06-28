@@ -189,8 +189,7 @@ public class WifiActivity extends Activity{
             if(intent.getAction().equals(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION)) {
                 final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                 WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                String wifiname = intent.getStringExtra("SSID");
-                Log.i(TAG, "SSID is "+wifiname);
+
                 if(wifiInfo != null) {
                     Log.i(TAG, "current ssid is " + wifiInfo.getSSID());
 
@@ -199,6 +198,10 @@ public class WifiActivity extends Activity{
                     String str = "";
                     int linkWifiResult = intent.getIntExtra(WifiManager.EXTRA_SUPPLICANT_ERROR, 123);
                     if(linkWifiResult == WifiManager.ERROR_AUTHENTICATING){
+
+                        String wifiname = intent.getStringExtra("SSID");
+                        Log.i(TAG, "SSID is "+wifiname);
+
                         Log.i(TAG,"passsword not correct！！！！  --->" +wifiname);
                         pwdWrongFlag = true;
                     }

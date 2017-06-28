@@ -1,6 +1,17 @@
 package aibt.will.com.myaibt.view;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.bluetooth.BluetoothA2dp;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothHeadset;
+import android.bluetooth.BluetoothProfile;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -8,8 +19,10 @@ import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
@@ -21,6 +34,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 import aibt.will.com.myaibt.R;
 
@@ -55,7 +71,11 @@ public class AudioActivity extends Activity implements View.OnClickListener, Med
     private int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
     private RecordTask recorder;
     private PlayTask player;
-
+    BluetoothDevice mBluetoothDevice;
+    BluetoothHeadset mBluetoothHeadset;
+    BluetoothAdapter mBluetoothAdapter;
+    AudioManager mAudioManager;
+    boolean mIsScoConnected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +91,40 @@ public class AudioActivity extends Activity implements View.OnClickListener, Med
 //        FileName += "/audiorecordtest.3gp";
         FileName += "/audiorecord.pcm";
         audioFile = new File(FileName);
+        mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        registerReceiver(new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int state = intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, -1);
+                Log.d(TAG, "Audio SCO state: " + state);
+
+                if (AudioManager.SCO_AUDIO_STATE_CONNECTED == state) {
+                /*
+                 * Now the connection has been established to the bluetooth device.
+                 * Record audio or whatever (on another thread).With AudioRecord you can record with an object created like this:
+                 * new AudioRecord(MediaRecorder.AudioSource.MIC, 8000, AudioFormat.CHANNEL_CONFIGURATION_MONO,
+                 * AudioFormat.ENCODING_PCM_16BIT, audioBufferSize);
+                 *
+                 * After finishing, don't forget to unregister this receiver and
+                 * to stop the bluetooth connection with am.stopBluetoothSco();
+                 */
+                    Log.i(TAG,"sco audio state connected");
+                    mAudioManager.setParameters("A2dpSuspended=false");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.i(TAG,"notifyScoAudioConnected...");
+                            notifyScoAudioConnected();
+                        }
+                    },1000);
+                    unregisterReceiver(this);
+                }
+
+            }
+        }, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_CHANGED));
 
     }
 
@@ -106,9 +160,17 @@ public class AudioActivity extends Activity implements View.OnClickListener, Med
             case R.id.stopPlay:
                 stopPlayRecord();
                 break;
-
+            case R.id.btnStartBT:
+                startBluetooth11();
+                break;
+            case R.id.btnStopBT:
+                stopBluetooth11();
+                break;
         }
     }
+
+
+
 
 
     /**
@@ -155,6 +217,7 @@ public class AudioActivity extends Activity implements View.OnClickListener, Med
 
             mp.reset();
             try {
+                mp.setAudioStreamType(9);
                 mp.setDataSource(Environment.getExternalStorageDirectory().toString()+"/Tez Cadey - Seve.mp3");
                 mp.prepareAsync();//异步准备完毕，则开始播放
                 isPause = false;
@@ -275,6 +338,7 @@ public class AudioActivity extends Activity implements View.OnClickListener, Med
     }
 
     private void stopPlayRecord(){
+        Log.i(TAG,"stopPlayRecord");
         isPlaying = false;
     }
 
@@ -345,5 +409,138 @@ public class AudioActivity extends Activity implements View.OnClickListener, Med
             return null;
         }
     }
+
+
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private boolean startBluetooth11() {
+        Log.i(TAG, "startBluetooth11"); //$NON-NLS-1$
+
+        // Device support bluetooth
+
+        if (mBluetoothAdapter != null) {
+            if (mAudioManager.isBluetoothScoAvailableOffCall()) {
+                if (mBluetoothAdapter.getProfileProxy(AudioActivity.this, mBluetoothProfileListener, BluetoothProfile.HEADSET)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    protected void stopBluetooth11() {
+        Log.i(TAG, "stopBluetooth11"); //$NON-NLS-1$
+
+        if (mBluetoothHeadset != null) {
+            mIsScoConnected = false;
+            mBluetoothHeadset.stopVoiceRecognition(mBluetoothDevice);
+            Log.i(TAG,"stop bluetooth sco");
+            mAudioManager.stopBluetoothSco();
+//            try {
+//                unregisterSCOReceiver();
+//            } catch (IllegalArgumentException e) {
+//                e.printStackTrace();
+//            }
+            mBluetoothAdapter.closeProfileProxy(BluetoothProfile.HEADSET, mBluetoothHeadset);
+            mBluetoothHeadset = null;
+        }
+    }
+
+    private BluetoothProfile.ServiceListener mBluetoothProfileListener = new BluetoothProfile.ServiceListener() {
+
+        /**
+         * This method is never called, even when we closeProfileProxy on
+         * onPause. When or will it ever be called???
+         */
+        @Override
+        public void onServiceDisconnected(int profile) {
+            Log.d(TAG, "Profile listener onServiceDisconnected"); //$NON-NLS-1$
+
+
+//            stopBluetooth11();
+        }
+
+        @SuppressWarnings("synthetic-access")
+        @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+        @Override
+        public void onServiceConnected(int profile, BluetoothProfile proxy) {
+            Log.d(TAG, "Profile listener onServiceConnected"); //$NON-NLS-1$
+
+            mBluetoothHeadset = (BluetoothHeadset) proxy;
+            List<BluetoothDevice> devices = mBluetoothHeadset.getConnectedDevices();
+            if (devices.size() > 0) {
+                mBluetoothDevice = devices.get(0);
+                Log.i(TAG, "device name:" + mBluetoothDevice.getName() + " , device major class:"
+                        + mBluetoothDevice.getBluetoothClass().getMajorDeviceClass() + " , device class: "
+                        + mBluetoothDevice.getBluetoothClass().getDeviceClass());
+                BluetoothClass bluetoothClass = mBluetoothDevice.getBluetoothClass();
+
+                mAudioManager.startBluetoothSco();
+                mAudioManager.setBluetoothScoOn(true);
+                mAudioManager.setBluetoothA2dpOn(true);
+
+                if (bluetoothClass != null) {
+//                    if (checkDevClass(bluetoothClass)) {
+                        if (mBluetoothHeadset != null) {
+                            //mBluetoothHeadset.startVoiceRecognition(mBluetoothDevice);
+
+
+//                        }
+                    }
+                }
+//                onHeadsetServiceConnected();
+            }
+        }
+    };
+
+
+    private void notifyScoAudioConnected() {
+        Log.i(TAG, "notifyScoAudioConnected");
+        if (mBluetoothAdapter.getProfileProxy(this, new BluetoothProfile.ServiceListener() {
+            @Override
+            public void onServiceConnected(int profile, BluetoothProfile bluetoothProfile) {
+                if (profile == BluetoothProfile.A2DP) {
+                    BluetoothA2dp bluetoothA2dp = (BluetoothA2dp) bluetoothProfile;
+                    List<BluetoothDevice> connectedDevices = bluetoothA2dp.getConnectedDevices();
+                    Log.d(TAG, "onServiceConnected, bluetooth service on, profile:" + profile + ", connectedDevices:" + connectedDevices);
+                    if (connectedDevices != null && connectedDevices.size() > 0) {
+                        int result = invokeMethod(mAudioManager, "setBluetoothA2dpDeviceConnectionState", connectedDevices.get(0), BluetoothA2dp.STATE_CONNECTED, BluetoothProfile.A2DP);
+                        Log.i(TAG,"result is "+result);
+                    }
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(int profile) {
+            }
+        }, BluetoothProfile.A2DP)) ;
+    }
+
+    private int invokeMethod(Object obj, String methodName, BluetoothDevice device, int state, int profile) {
+        try {
+            Method method = obj.getClass().getMethod(methodName);
+            method.setAccessible(true);
+            int result = 0;
+            try {
+                result = (Integer) method.invoke(obj, device, state, profile);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            return result;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+
 
 }

@@ -58,4 +58,22 @@
             />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/btnStartBT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:text="startBluetooth11"/>
+        <Button
+            android:id="@+id/btnStopBT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:text="stopBluetooth11"/>
+    </LinearLayout>
+
 </LinearLayout>

@@ -7,10 +7,7 @@ import android.bluetooth.BluetoothHeadset;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -54,13 +51,13 @@ public class BTActivity extends Activity{
         this.registerReceiver(mBtDeviceReceiver, mBtDeviceReceiver.getFilter());
 
 
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (! Settings.canDrawOverlays(BTActivity.this)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent,10);
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= 23) {
+//            if (! Settings.canDrawOverlays(BTActivity.this)) {
+//                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+//                        Uri.parse("package:" + getPackageName()));
+//                startActivityForResult(intent,10);
+//            }
+//        }
 
         init();
     }
