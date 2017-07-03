@@ -40,6 +40,10 @@ public class WFAdapter extends PagerAdapter{
 
     private Map<Integer,MyViewHolder> holders = new HashMap<Integer, MyViewHolder>();
 
+    public interface ItemLoadedListener {
+        void onItemLoaded();
+    }
+
     public static class MyViewHolder{
         public WifiItemViewGroup view;
     }
@@ -71,15 +75,24 @@ public class WFAdapter extends PagerAdapter{
         WifiItemViewGroup view;
         if(currentHolder == null){
             view = (WifiItemViewGroup) View.inflate(MyApplication.getContext(),R.layout.wf_pager,null);
+            view.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
             currentHolder = new MyViewHolder();
             holders.put(position,currentHolder);
             currentHolder.view = view;
 
             for(int i = 0 ; i < currentPageItem; i++){
                 View itemView = View.inflate(MyApplication.getContext(),R.layout.wifi_item_layout,null);
+                View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View view, boolean b) {
+                        Log.i(TAG,"View "+view +",focus change:"+b);
+                    }
+                };
+
                 TextView wifiItemIndex = (TextView) itemView.findViewById(R.id.wfNum);
                 wifiItemIndex.setText(String.valueOf(i%8 + 1));
                 itemView.setFocusable(true);    //!!!
+                itemView.setOnFocusChangeListener(focusChangeListener);
                 view.addView(itemView);
                 Log.i(TAG,"instantiateItem "+i);
             }
@@ -181,9 +194,6 @@ public class WFAdapter extends PagerAdapter{
     }
 
 
-    public interface ItemLoadedListener {
-        void onItemLoaded();
-    }
 
 
 

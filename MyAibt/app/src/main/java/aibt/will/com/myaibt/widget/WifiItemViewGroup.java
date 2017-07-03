@@ -1,9 +1,11 @@
 package aibt.will.com.myaibt.widget;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -55,6 +57,7 @@ public class WifiItemViewGroup extends LinearLayout {
             View childView = getChildAt(i);
             MarginLayoutParams cParams = (MarginLayoutParams) childView.getLayoutParams();
             cParams.width = (sizeWidth - (cParams.leftMargin + cParams.rightMargin)*2)/2;
+            Log.i(TAG,"child["+i+"] width is "+cParams.width);
             childView.setLayoutParams(cParams);
         }
         if(getChildCount() > 0){
@@ -85,9 +88,13 @@ public class WifiItemViewGroup extends LinearLayout {
         MarginLayoutParams cParams = null;
         for(int i = 0; i < cCount; i++){
             View childView = getChildAt(i);
-            cWidth = childView.getMeasuredWidth();
-            cHeight = childView.getMeasuredHeight();
+
             cParams = (MarginLayoutParams) childView.getLayoutParams();
+
+
+
+            cWidth = cParams.width;
+            cHeight = childView.getMeasuredHeight();
 
             int cl = 0, ct = 0, cr = 0, cb = 0;
             switch (i){
@@ -127,8 +134,27 @@ public class WifiItemViewGroup extends LinearLayout {
 
             cr = cl + cWidth;
             cb = ct + cHeight;
+            Log.i(TAG,"child["+i+"]"+"("+cl+", "+ct+", "+cr+", "+cb+")");
             childView.layout(cl, ct, cr, cb);
         }
     }
+
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event){
+
+        Log.i(TAG,"dispatchKeyEvent" + event.getKeyCode());
+        return super.dispatchKeyEvent(event);
+
+    }
+
+
+    @Override
+    public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
+        Log.i(TAG,"requestFocus"+direction);
+        return super.requestFocus(direction, previouslyFocusedRect);
+    }
+
+
 
 }

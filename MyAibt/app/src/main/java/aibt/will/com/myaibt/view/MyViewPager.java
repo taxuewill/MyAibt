@@ -3,7 +3,6 @@ package aibt.will.com.myaibt.view;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
 
 /**
  * @author 王晶
@@ -11,6 +10,8 @@ import android.view.KeyEvent;
  * @desc
  */
 public class MyViewPager extends ViewPager {
+
+    private static final String TAG = "MyViewPager";
     public MyViewPager(Context context) {
         super(context);
     }
@@ -19,11 +20,10 @@ public class MyViewPager extends ViewPager {
         super(context, attrs);
     }
 
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        // Let the focused view and/or our descendants get the key first
-        return false;
-    }
+    int focusIndex = 0;
+
+
+
 
 
 }

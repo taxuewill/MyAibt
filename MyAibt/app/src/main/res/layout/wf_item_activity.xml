@@ -10,12 +10,12 @@
 
 
 
-    <aibt.will.com.myaibt.view.MyViewPager
-        android:id="@+id/wfPager"
-        android:layout_width="match_parent"
-        android:layout_height="150dp">
+    <!--<aibt.will.com.myaibt.view.MyViewPager-->
+        <!--android:id="@+id/wfPager"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="150dp">-->
 
-    </aibt.will.com.myaibt.view.MyViewPager>
+    <!--</aibt.will.com.myaibt.view.MyViewPager>-->
     <!--<aibt.will.com.myaibt.widget.WifiItemViewGroup-->
         <!--android:id="@+id/wifGroup"-->
         <!--android:layout_width="wrap_content"-->
