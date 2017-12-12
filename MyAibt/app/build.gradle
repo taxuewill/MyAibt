@@ -30,11 +30,11 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
     compile 'com.android.support:design:25.+'
     testCompile 'junit:junit:4.12'
-    provided files('systemlib/classes.jar') //system-lib -no-expor
+    //provided files('systemlib/classes.jar') //system-lib -no-expor
 }
 
 //system-lib-config
-project(project.path) {
+/*project(project.path) {
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
             String sysLib = ":" + project.projectDir.path + "/systemlib/"
@@ -44,3 +44,4 @@ project(project.path) {
         }
     }
 }
+*/

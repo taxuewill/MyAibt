@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import aibt.will.com.myaibt.view.GestureActivity;
 import aibt.will.com.myaibt.view.WFItemActivity;
 
 public class MainActivity extends Activity {
@@ -22,7 +23,7 @@ public class MainActivity extends Activity {
 //        startActivity(intent);
 //        Intent intent = new Intent(this, WifiActivity.class);
 //        startActivity(intent);
-        Intent intent = new Intent(this, WFItemActivity.class);
+        Intent intent = new Intent(this, GestureActivity.class);
         startActivity(intent);
 
         Log.i(TAG,"start mainActivity");
